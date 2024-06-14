@@ -30,7 +30,9 @@ class Venue extends Model
 
     public function items()
     {
-        return $this->hasMany(Item::class);
+        return $this
+            ->hasMany(Item::class)
+            ->where('type', '!=', 'deal');
     }
 
     public function tags(): MorphToMany

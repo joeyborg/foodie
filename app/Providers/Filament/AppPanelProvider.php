@@ -57,7 +57,8 @@ class AppPanelProvider extends PanelProvider
             //
             ->topNavigation()
             ->maxContentWidth('4xl')
-            ->darkMode(false)
+            ->darkMode(true)
+            ->breadcrumbs(false)
             //
         ;
     }

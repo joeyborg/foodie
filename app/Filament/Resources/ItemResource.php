@@ -8,6 +8,7 @@ use App\Models\Item;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Support\Enums\FontWeight;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -52,50 +53,40 @@ class ItemResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\ImageColumn::make('image_url'),
-                Tables\Columns\TextColumn::make('venue_id')
-                    ->numeric()
-                    ->sortable()
-                    ->hidden(),
-                Tables\Columns\TextColumn::make('wolt_id')
-                    ->searchable()
-                    ->hidden(),
                 Tables\Columns\TextColumn::make('name')
-                    ->description(fn (Item $item) => $item->description)
                     ->searchable()
-                    ->wrap(),
+                    ->weight(FontWeight::SemiBold),
+
+                // Tables\Columns\Layout\Split::make([
+                // Tables\Columns\Layout\Stack::make([
+                Tables\Columns\TextColumn::make('description')
+                    ->limit(50)
+                    ->color('gray')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('price')
                     ->money('EUR', 100)
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('original_price')
-                    ->money('EUR', 100)
-                    ->sortable()
-                    ->hidden(),
-                Tables\Columns\TextColumn::make('description')
-                    ->searchable()
-                    ->hidden(),
-                Tables\Columns\TextColumn::make('type')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->color('primary'),
+                // ]),
+
+                Tables\Columns\ImageColumn::make('image_url'),
+                // ])
             ])
+            // ->contentGrid(['sm' => 3])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                // Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
                 // Tables\Actions\BulkActionGroup::make([
                 //     Tables\Actions\DeleteBulkAction::make(),
                 // ]),
-            ]);
+            ])
+            ->paginated(false)
+            //
+            //
+        ;
     }
 
     public static function getRelations(): array

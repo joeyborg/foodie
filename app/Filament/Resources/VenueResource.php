@@ -12,6 +12,10 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Infolists;
+use Filament\Infolists\Components\TextEntry\TextEntrySize;
+use Filament\Infolists\Infolist;
+use Filament\Support\Enums\FontWeight;
 
 class VenueResource extends Resource
 {
@@ -55,6 +59,7 @@ class VenueResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\ImageColumn::make('image_url'),
                 Tables\Columns\TextColumn::make('wolt_id')
                     ->searchable()
                     ->hidden(),
@@ -82,7 +87,6 @@ class VenueResource extends Resource
                     ->sortable(),
                 Tables\Columns\IconColumn::make('delivers')
                     ->boolean(),
-                Tables\Columns\ImageColumn::make('image_url'),
                 // Tables\Columns\TextColumn::make('created_at')
                 //     ->dateTime()
                 //     ->sortable()
@@ -101,6 +105,7 @@ class VenueResource extends Resource
             ])
             ->actions([
                 Tables\Actions\ActionGroup::make([
+                    Tables\Actions\ViewAction::make(),
                     Tables\Actions\EditAction::make(),
                 ]),
             ])
@@ -109,6 +114,29 @@ class VenueResource extends Resource
                 //     Tables\Actions\DeleteBulkAction::make(),
                 // ]),
             ]);
+    }
+
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                Infolists\Components\RepeatableEntry::make('items')
+                    ->schema([
+                        Infolists\Components\ImageEntry::make('image_url')
+                            ->hiddenLabel(),
+                        Infolists\Components\TextEntry::make('name')
+                            ->hiddenLabel()
+                            ->size(TextEntrySize::Medium)
+                            ->weight(FontWeight::SemiBold),
+                        Infolists\Components\TextEntry::make('price')
+                            ->money('EUR', 100)
+                            ->inlineLabel()
+                    ])
+                    ->grid(3)
+                    ->hiddenLabel()
+                    ->contained(false),
+            ])
+            ->columns(1);
     }
 
     public static function getRelations(): array
@@ -123,6 +151,7 @@ class VenueResource extends Resource
         return [
             'index' => Pages\ListVenues::route('/'),
             'create' => Pages\CreateVenue::route('/create'),
+            'view' => Pages\ViewVenue::route('/{record}'),
             'edit' => Pages\EditVenue::route('/{record}/edit'),
         ];
     }
