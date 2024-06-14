@@ -28,8 +28,18 @@ class Venue extends Model
         'delivers' => 'boolean',
     ];
 
+    public function items()
+    {
+        return $this->hasMany(Item::class);
+    }
+
     public function tags(): MorphToMany
     {
         return $this->morphToMany(Tag::class, 'taggable');
+    }
+
+    public function getRouteKeyName()
+    {
+        return 'slug';
     }
 }

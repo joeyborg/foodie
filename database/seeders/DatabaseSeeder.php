@@ -69,5 +69,31 @@ class DatabaseSeeder extends Seeder
                 );
             }
         }
+
+        $venue = Venue::where('wolt_id', '645b823db37d14debeaa2278')->first();
+
+        // load 645b823db37d14debeaa2278.json
+        $json = file_get_contents(database_path('seeders/645b823db37d14debeaa2278.json'));
+
+        // Create items (get them from items)
+        $items = collect(json_decode($json, true)['items'])
+            ->map(function ($item) use ($venue) {
+                return [
+                    'venue_id' => $venue->id,
+                    'wolt_id' => $item['id'],
+                    'name' => $item['name'],
+                    'price' => $item['baseprice'],
+                    'original_price' => $item['original_price'] ?? null,
+                    'description' => $item['description'],
+                    'image_url' => $item['image'] ?? null,
+                    'type' => $item['type'],
+                ];
+            });
+
+        foreach ($items as $item) {
+            $model = $venue->items()->firstOrCreate([
+                'wolt_id' => $item['wolt_id'],
+            ], $item);
+        }
     }
 }
